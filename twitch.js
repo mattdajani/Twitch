@@ -17,24 +17,10 @@ function getUserInfo(index, firstCallback) { // fires first
         if(xhr.status !== 200) {
             throw new Error('request failed');
         }
-        userCallback(xhr.responseText, index);
+        firstCallback(xhr.responseText, index);
     }
     xhr.onerror = xhrErrorHandler;
     xhr.open('GET', userUrl, true);
-    xhr.send();
-};
-
-function getStatus(userInfoData, index, seoncdCallback) { // fires second to check online status
-    var xhr = new XMLHttpRequest();
-    var statusUrl = "https://wind-bow.glitch.me/twitch-api/streams/" + streamerNames[index];
-    xhr.onload = function () {
-        if(xhr.status !== 200) {
-            throw new Error('request failed');
-        }
-        statusCallback(xhr.responseText, userInfoData);
-    }
-    xhr.onerror = xhrErrorHandler;
-    xhr.open('GET', statusUrl, true);
     xhr.send();
 };
 
@@ -43,12 +29,26 @@ function userCallback(data, index){ // first callback
         getStatus(data1, index, statusCallback);
     };
 
+function getStatus(userInfoData, index, secondCallback) { // fires second to check online status
+    var xhr = new XMLHttpRequest();
+    var statusUrl = "https://wind-bow.glitch.me/twitch-api/streams/" + streamerNames[index];
+    xhr.onload = function () {
+        if(xhr.status !== 200) {
+            throw new Error('request failed');
+        }
+        secondCallback(xhr.responseText, userInfoData);
+    }
+    xhr.onerror = xhrErrorHandler;
+    xhr.open('GET', statusUrl, true);
+    xhr.send();
+};
+
 function statusCallback(userStatusData, userInfoData){ // second callback
         var userStatusData = JSON.parse(userStatusData);
         appendUser(userInfoData, userStatusData);
     };
 
-function appendUser(userInfo, statusInfo){ // after callbacks
+function appendUser(userInfo, statusInfo){ // final function
 	resultsBox.innerHTML += "<div class=row><div class=col-xs-6><p>" + userInfo.name + "</p></div>" + "<div class=col-xs-6><img class='img-responsive img-circle' src=" + userInfo.logo + "></div>"
 	+ "<div class=col-xs-6><p>" + userInfo.bio + "</p></div>" + "<div class=col-xs-6><p id=" + userInfo.name + ">" + isOnline(statusInfo) + "</p></div></div>";
 };
