@@ -1,45 +1,62 @@
-// https://wind-bow.glitch.me/ for more info
-// example query https://wind-bow.glitch.me/twitch-api/users/freecodecamp
+// Show Twitch streamer user info and online status
+// Making multiple calls with the Twitch API using callbacks
+// Aysnc calls must be in order to properly show online status of users
 
 var streamerNames = ["freecodecamp", "medrybw", "noobs2ninjas"];
 var namesLength = streamerNames.length;
 var resultsBox = document.getElementById('resultsBox');
 
-getUserInfo(namesLength);
+for(var i = 0; i < namesLength; i++){
+	getUserInfo(i, userCallback);
+};
 
-
-function httpGetAsync(theUrl, callback)
-{
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() { 
-        if (xmlHttp.readyState === 4 && xmlHttp.status === 200)
-            callback(xmlHttp.responseText);
+function getUserInfo(index, firstCallback) { // fires first
+    var xhr = new XMLHttpRequest();
+    var userUrl = "https://wind-bow.glitch.me/twitch-api/users/" + streamerNames[index];
+    xhr.onload = function () {
+        if(xhr.status !== 200) {
+            throw new Error('request failed');
+        }
+        userCallback(xhr.responseText, index);
     }
-    xmlHttp.open("GET", theUrl, true);
-    xmlHttp.send(null);
+    xhr.onerror = xhrErrorHandler;
+    xhr.open('GET', userUrl, true);
+    xhr.send();
 };
 
-function appendUser(userInfo, statusInfo){
+function getStatus(userInfoData, index, seoncdCallback) { // fires second to check online status
+    var xhr = new XMLHttpRequest();
+    var statusUrl = "https://wind-bow.glitch.me/twitch-api/streams/" + streamerNames[index];
+    xhr.onload = function () {
+        if(xhr.status !== 200) {
+            throw new Error('request failed');
+        }
+        statusCallback(xhr.responseText, userInfoData);
+    }
+    xhr.onerror = xhrErrorHandler;
+    xhr.open('GET', statusUrl, true);
+    xhr.send();
+};
+
+function userCallback(data, index){ // first callback
+        var data1 = JSON.parse(data);
+        getStatus(data1, index, statusCallback);
+    };
+
+function statusCallback(userStatusData, userInfoData){ // second callback
+        var userStatusData = JSON.parse(userStatusData);
+        appendUser(userInfoData, userStatusData);
+    };
+
+function appendUser(userInfo, statusInfo){ // after callbacks
 	resultsBox.innerHTML += "<div class=row><div class=col-xs-6><p>" + userInfo.name + "</p></div>" + "<div class=col-xs-6><img class='img-responsive img-circle' src=" + userInfo.logo + "></div>"
-	+ "<div class=col-xs-6><p>" + userInfo.bio + "</p></div>" + "<div class=col-xs-6><p id=" + userInfo.name + ">" + "online status placeholder" + "</p></div></div>";
+	+ "<div class=col-xs-6><p>" + userInfo.bio + "</p></div>" + "<div class=col-xs-6><p id=" + userInfo.name + ">" + isOnline(statusInfo) + "</p></div></div>";
 };
 
-function getUserInfo(length){
-	for(var i = 0; i < length; i++){
-		var infoUrl = "https://wind-bow.glitch.me/twitch-api/users/" + streamerNames[i];
-		httpGetAsync(infoUrl, function(data){
-			var userInfo = JSON.parse(data);
-			console.log(userInfo);
-});	
-}
+function isOnline(statusInfo){
+	return statusInfo.stream !== null;
 };
 
-function getOnlineStatus(length){
-	for(var i = 0; i < length; i++){
-		var statusUrl = "https://wind-bow.glitch.me/twitch-api/streams/" + streamerNames[i];
-	httpGetAsync(statusUrl, function(data){
-		var userStatus = JSON.parse(data);
-		console.log(userStatus);
-	});
-}
+function xhrErrorHandler(){
+	console.log('XHR error');
 };
