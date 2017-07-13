@@ -2,6 +2,27 @@ body {
 	background-color: #6441A5;
 }
 img {
-    max-height: 100px;
+    max-height: 4em;
     max-width: auto;
+}
+#title {
+	margin-bottom: 1.5em;
+}
+.streamBlock {
+	margin-bottom: .1em;
+	padding-top: .2em;
+	padding-bottom: .2em;
+	background-color: #F5F5F5;
+	border-radius: .5em;
+}
+.online {
+	color: #41A564;
+}
+/* below added to make columns same size */
+.row{
+    overflow: hidden; 
+}
+[class*="col-"]{
+    margin-bottom: -99999px;
+    padding-bottom: 99999px;
 }

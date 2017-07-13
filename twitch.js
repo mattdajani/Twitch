@@ -48,14 +48,14 @@ function statusCallback(userStatusData, userInfoData){ // second callback
     };
 
 function appendUser(userInfo, statusInfo){ // final function
-	resultsBox.innerHTML += "<div class=row>" + 
+	resultsBox.innerHTML += "<div class='row streamBlock'>" + "<a href=https://www.twitch.tv/" + userInfo.name + " target=_blank>" +
 	"<div class=col-xs-4><img class='img-responsive img-circle' src=" + userInfo.logo + "></div>"+
 	"<div class=col-xs-4><p>" + userInfo.name + "</p></div>"
-	+ "<div class=col-xs-4><p id=" + userInfo.name + ">" + isOnline(statusInfo) + "</p></div></div>";
+	+ "<div class=col-xs-4><p>" + isOnline(statusInfo) + "</p></div></a></div>";
 };
 
 function isOnline(statusInfo){
-	if(statusInfo.stream !== null) return 'Online';
+	if(statusInfo.stream !== null) return '<span class=online>Online</span>';
 	return 'Offline';
 };
 
