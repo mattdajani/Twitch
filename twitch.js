@@ -2,11 +2,10 @@
 // Making multiple calls with the Twitch API using callbacks
 // Aysnc calls must be in order to properly show online status of users
 
-var streamerNames = ["freecodecamp", "medrybw", "noobs2ninjas"];
-var namesLength = streamerNames.length;
+var streamerNames = ["freecodecamp", "medrybw", "noobs2ninjas", "ESL_SC2", "OgamingSC2", "cretetion", "habathcx", "RobotCaleb"];
 var resultsBox = document.getElementById('resultsBox');
 
-for(var i = 0; i < namesLength; i++){
+for (var i in streamerNames){
 	getUserInfo(i, userCallback);
 };
 
@@ -49,12 +48,15 @@ function statusCallback(userStatusData, userInfoData){ // second callback
     };
 
 function appendUser(userInfo, statusInfo){ // final function
-	resultsBox.innerHTML += "<div class=row><div class=col-xs-6><p>" + userInfo.name + "</p></div>" + "<div class=col-xs-6><img class='img-responsive img-circle' src=" + userInfo.logo + "></div>"
-	+ "<div class=col-xs-6><p>" + userInfo.bio + "</p></div>" + "<div class=col-xs-6><p id=" + userInfo.name + ">" + isOnline(statusInfo) + "</p></div></div>";
+	resultsBox.innerHTML += "<div class=row>" + 
+	"<div class=col-xs-4><img class='img-responsive img-circle' src=" + userInfo.logo + "></div>"+
+	"<div class=col-xs-4><p>" + userInfo.name + "</p></div>"
+	+ "<div class=col-xs-4><p id=" + userInfo.name + ">" + isOnline(statusInfo) + "</p></div></div>";
 };
 
 function isOnline(statusInfo){
-	return statusInfo.stream !== null;
+	if(statusInfo.stream !== null) return 'Online';
+	return 'Offline';
 };
 
 function xhrErrorHandler(){
