@@ -18,6 +18,12 @@ img {
 .online {
 	color: #41A564;
 }
+.streamBlock p {
+	margin-top: 1.2em;
+}
+footer {
+	margin-top: 1.5em;
+}
 /* below added to make columns same size */
 .row{
     overflow: hidden; 
